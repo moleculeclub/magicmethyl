@@ -1,5 +1,6 @@
-import pytest
+# import pytest
 from magicmethyl import magicmethyl
+
 
 def test_convert(capsys):
     """Correct my_name argument prints"""
