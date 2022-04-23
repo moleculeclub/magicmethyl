@@ -3,7 +3,7 @@ CHI_TETRAHEDRAL_CW = Chem.ChiralType.CHI_TETRAHEDRAL_CW
 CHI_TETRAHEDRAL_CCW = Chem.ChiralType.CHI_TETRAHEDRAL_CCW
 
 
-def methylate(smi: str) -> list[str]:
+def methylate(smi: str):
     """Generates all unique methylations including stereoisomers.
 
     Examples
