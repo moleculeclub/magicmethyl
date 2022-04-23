@@ -1,4 +1,7 @@
 from rdkit import Chem
+CHI_TETRAHEDRAL_CW = Chem.ChiralType.CHI_TETRAHEDRAL_CW
+CHI_TETRAHEDRAL_CCW = Chem.ChiralType.CHI_TETRAHEDRAL_CCW
+
 
 def methylate(smi: str) -> list[str]:
     """Generates all unique methylations including stereoisomers.
@@ -36,11 +39,12 @@ def methylate(smi: str) -> list[str]:
                 # if there is a possible stereocenter, we generate both possible
                 #  mols and compare their SMILES strings to check for uniqueness
                 else:
-                    analog.GetAtomWithIdx(i).SetChiralTag(Chem.ChiralType.CHI_TETRAHEDRAL_CW)
+                    analog.GetAtomWithIdx(i).SetChiralTag(CHI_TETRAHEDRAL_CW)
                     cw_isomer = analog.GetMol()
-                    analog.GetAtomWithIdx(i).SetChiralTag(Chem.ChiralType.CHI_TETRAHEDRAL_CCW)
+                    analog.GetAtomWithIdx(i).SetChiralTag(CHI_TETRAHEDRAL_CCW)
                     ccw_isomer = analog.GetMol()
-                    if Chem.MolToSmiles(cw_isomer) == Chem.MolToSmiles(ccw_isomer):
+                    if (Chem.MolToSmiles(cw_isomer) ==
+                       Chem.MolToSmiles(ccw_isomer)):
                         analogs.append(Chem.MolToSmiles(cw_isomer))
                     else:
                         analogs.append(Chem.MolToSmiles(cw_isomer))
@@ -52,5 +56,5 @@ def methylate(smi: str) -> list[str]:
                 analog.AddBond(i, num_atoms, Chem.BondType.SINGLE)
                 analog = analog.GetMol()
                 analogs.append(Chem.MolToSmiles(analog))
-            
+
     return list(set(analogs))
