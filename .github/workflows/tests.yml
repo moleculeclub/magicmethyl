@@ -26,7 +26,7 @@ jobs:
         run: pip install .
       - name: flake8
         run: flake8
-      - name: mypy
-        run: mypy magicmethyl
+#       - name: mypy
+#         run: mypy magicmethyl
       - name: Run pytest
         run: pytest
