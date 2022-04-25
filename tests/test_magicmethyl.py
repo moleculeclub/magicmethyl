@@ -12,3 +12,6 @@ def test_methylate():
     assert 'CN(O)C(=O)C1CC=CC1' in analogs
     assert 'CC1=CCC(C(=O)NO)C1' in analogs
     assert 'C[C@@H]1C=CCC1C(=O)NO' in analogs
+
+    analogs = magicmethyl.methylate('CN(CCN1CCCC1)C(=O)CC1=CC=C(Cl)C(Cl)=C1')
+    assert len(analogs) == 14
