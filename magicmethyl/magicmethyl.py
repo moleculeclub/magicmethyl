@@ -32,9 +32,16 @@ def methylate(smi: str):
                 analog = Chem.RWMol(mol)
                 analog.AddAtom(Chem.Atom(6))
                 analog.AddBond(i, num_atoms, Chem.BondType.SINGLE)
+                # find if the atom has any other methyls on it
+                has_methyls = False
+                for neighbor in atom.GetNeighbors():
+                    if (neighbor.GetSymbol() == 'C' and
+                       neighbor.GetTotalNumHs() == 3):
+                        has_methyls = True
                 # if the atom is not sp3, there cannot be a stereocenter
                 if (atom.GetHybridization() != Chem.HybridizationType.SP3 or
-                   atom.GetTotalNumHs() == 3):
+                   atom.GetTotalNumHs() == 3
+                   or has_methyls):
                     analog = analog.GetMol()
                     analogs.append(Chem.MolToSmiles(analog))
                 # if there is a possible stereocenter, we generate both possible
