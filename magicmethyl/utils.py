@@ -16,4 +16,4 @@ def show_analogs(analogs):
     print(f'there are {len(analogs)} analogs\n')
     for analog in analogs:
         print(analog)
-        display(Chem.MolFromSmiles(analog))
+        display(Chem.MolFromSmiles(analog))  # noqa: F821

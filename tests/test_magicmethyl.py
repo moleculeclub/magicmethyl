@@ -15,3 +15,7 @@ def test_methylate():
 
     analogs = magicmethyl.methylate('CN(CCN1CCCC1)C(=O)CC1=CC=C(Cl)C(Cl)=C1')
     assert len(analogs) == 14
+
+    # this test fails due to inability to recognize symmetry in methyl groups
+    analogs = magicmethyl.methylate('CCCC1=CC2=C(OC=CC2=O)C=C1OC(C)=O')
+    assert len(analogs) == 9
