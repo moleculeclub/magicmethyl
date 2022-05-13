@@ -1,6 +1,4 @@
-from rdkit import Chem
-CHI_TETRAHEDRAL_CW = Chem.ChiralType.CHI_TETRAHEDRAL_CW
-CHI_TETRAHEDRAL_CCW = Chem.ChiralType.CHI_TETRAHEDRAL_CCW
+from rdkit import Chem  # type: ignore
 
 
 def methylate(smi: str):
@@ -19,6 +17,10 @@ def methylate(smi: str):
     -------
     list[str]
         A list containing all unique methylations as SMILES strings."""
+    CHI_TETRAHEDRAL_CW = Chem.ChiralType.CHI_TETRAHEDRAL_CW
+    CHI_TETRAHEDRAL_CCW = Chem.ChiralType.CHI_TETRAHEDRAL_CCW
+    CHI_UNSPECIFIED = Chem.ChiralType.CHI_UNSPECIFIED
+
     mol = Chem.MolFromSmiles(smi)
     mol_h = Chem.AddHs(mol)
     num_atoms = mol.GetNumAtoms()
@@ -36,10 +38,7 @@ def methylate(smi: str):
                         hyd = neighbor
                 analog = Chem.RWMol(mol_h)
                 analog.ReplaceAtom(hyd.GetIdx(), Chem.Atom(6))
-                # # leftover from old implementation
-                # analog.AddAtom(Chem.Atom(6))
-                # analog.AddBond(i, num_atoms, Chem.BondType.SINGLE)
-                # # find if the atom has any other methyls on it
+                # find if the atom has any other methyls on it
                 has_methyls = False
                 for neighbor in atom.GetNeighbors():
                     if (neighbor.GetSymbol() == 'C' and
@@ -52,7 +51,6 @@ def methylate(smi: str):
                    or has_methyls):
                     analog = analog.GetMol()
                     analog = Chem.RemoveAllHs(analog)
-                    # analog.UpdatePropertyCache()
                     analogs.append(Chem.MolToSmiles(analog))
                 # if there is a possible stereocenter, we generate both possible
                 #  mols and compare their SMILES strings to check for uniqueness
@@ -60,13 +58,12 @@ def methylate(smi: str):
                     analog.GetAtomWithIdx(i).SetChiralTag(CHI_TETRAHEDRAL_CW)
                     cw_isomer = analog.GetMol()
                     cw_isomer = Chem.RemoveAllHs(cw_isomer)
-                    # cw_isomer.UpdatePropertyCache()
                     analog.GetAtomWithIdx(i).SetChiralTag(CHI_TETRAHEDRAL_CCW)
                     ccw_isomer = analog.GetMol()
                     ccw_isomer = Chem.RemoveAllHs(ccw_isomer)
-                    # ccw_isomer.UpdatePropertyCache()
                     if (Chem.MolToSmiles(cw_isomer) ==
                        Chem.MolToSmiles(ccw_isomer)):
+                        analog.GetAtomWithIdx(i).SetChiralTag(CHI_UNSPECIFIED)
                         analogs.append(Chem.MolToSmiles(cw_isomer))
                     else:
                         analogs.append(Chem.MolToSmiles(cw_isomer))
@@ -77,7 +74,6 @@ def methylate(smi: str):
                 analog.AddAtom(Chem.Atom(6))
                 analog.AddBond(i, num_atoms, Chem.BondType.SINGLE)
                 analog = analog.GetMol()
-                # analog.UpdatePropertyCache()
                 analogs.append(Chem.MolToSmiles(analog))
 
     return list(set(analogs))
